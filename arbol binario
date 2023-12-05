@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct nodo {
+    int dato;
+    struct nodo *der;
+    struct nodo *izq;
+};
+
+void menu();
+struct nodo *crearnodo(int);
+void insertarnodo(struct nodo **, int);
+void mostrarArbolInOrden(struct nodo *);
+void liberarMemoria(struct nodo *);
+
+struct nodo *arbol = NULL;
+
+int main() {
+    menu();
+    liberarMemoria(arbol); // Liberar memoria al finalizar el programa
+    return 0;
+}
+
+void menu() {
+    int dato, opcion;
+    do {
+        printf("\t. MENU \n");
+        printf("1. Ingresar un nuevo nodo\n");
+        printf("2. Mostrar el arbol en orden\n");
+        printf("3. Salir\n");
+        printf("Opcion: ");
+        if (scanf("%d", &opcion) != 1) {
+            printf("Entrada no válida. Intente de nuevo.\n");
+            while (getchar() != '\n'); // Limpiar el búfer de entrada
+            continue;
+        }
+
+        switch (opcion) {
+            case 1:
+                printf("\nDigite un numero: ");
+                if (scanf("%d", &dato) != 1) {
+                    printf("Entrada no válida. Intente de nuevo.\n");
+                    while (getchar() != '\n'); // Limpiar el búfer de entrada
+                    continue;
+                }
+                insertarnodo(&arbol, dato);
+                printf("\n");
+                getchar(); // Pausar hasta que se presione Enter
+                break;
+
+            case 2:
+                printf("\nMostrando el arbol en orden:\n");
+                mostrarArbolInOrden(arbol);
+                printf("\n");
+                getchar(); // Pausar hasta que se presione Enter
+                break;
+        }
+
+        system("clear || cls"); // Limpiar la pantalla
+    } while (opcion != 3);
+}
+
+struct nodo *crearnodo(int n) {
+    struct nodo *nuevo_nodo = (struct nodo *)malloc(sizeof(struct nodo));
+
+    nuevo_nodo->dato = n;
+    nuevo_nodo->der = NULL;
+    nuevo_nodo->izq = NULL;
+
+    return nuevo_nodo;
+}
+
+void insertarnodo(struct nodo **arbol, int n) {
+    if (*arbol == NULL) {
+        struct nodo *nuevo_nodo = crearnodo(n);
+        *arbol = nuevo_nodo;
+    } else {
+        int valorraiz = (*arbol)->dato;
+        if (n < valorraiz) {
+            insertarnodo(&((*arbol)->izq), n);
+        } else {
+            insertarnodo(&((*arbol)->der), n);
+        }
+    }
+}
+
+void mostrarArbolInOrden(struct nodo *arbol) {
+    if (arbol != NULL) {
+        mostrarArbolInOrden(arbol->izq);
+        printf("%d ", arbol->dato);
+        mostrarArbolInOrden(arbol->der);
+    }
+}
+
+void liberarMemoria(struct nodo *arbol) {
+    if (arbol != NULL) {
+        liberarMemoria(arbol->izq);
+        liberarMemoria(arbol->der);
+        free(arbol);
+    }
+}
