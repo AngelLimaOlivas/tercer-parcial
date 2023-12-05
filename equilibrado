@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct nodo {
+    int dato;
+    int altura;
+    struct nodo *der;
+    struct nodo *izq;
+};
+
+void menu();
+struct nodo *crearnodo(int);
+struct nodo *insertarAVL(struct nodo *, int);
+void mostrarArbolInOrden(struct nodo *);
+void liberarArbol(struct nodo *);
+int altura(struct nodo *);
+int balanceFactor(struct nodo *);
+struct nodo *rotacionDerecha(struct nodo *);
+struct nodo *rotacionIzquierda(struct nodo *);
+struct nodo *balancearNodo(struct nodo *);
+
+struct nodo *arbol = NULL;
+
+int main() {
+    menu();
+    liberarArbol(arbol);
+    return 0;
+}
+
+void menu() {
+    int dato, opcion;
+    do {
+        printf("\t MENU \n");
+        printf("1. Ingresar un nuevo nodo\n");
+        printf("2. Mostrar el arbol en orden\n");
+        printf("3. Salir\n");
+        printf("Opcion: ");
+        if (scanf("%d", &opcion) != 1) {
+            printf("Entrada no válida. Intente de nuevo.\n");
+            while (getchar() != '\n'); // Limpiar el búfer de entrada
+            continue;
+        }
+
+        switch (opcion) {
+            case 1:
+                printf("\nDigite un numero: ");
+                if (scanf("%d", &dato) != 1) {
+                    printf("Entrada no válida. Intente de nuevo.\n");
+                    while (getchar() != '\n'); // Limpiar el búfer de entrada
+                    continue;
+                }
+                arbol = insertarAVL(arbol, dato);
+                printf("\n");
+                getchar(); // Pausar hasta que se presione Enter
+                break;
+
+            case 2:
+                printf("\nMostrando el arbol en orden:\n");
+                mostrarArbolInOrden(arbol);
+                printf("\n");
+                getchar(); // Pausar hasta que se presione Enter
+                break;
+        }
+
+        printf("\n");
+        for (int i = 0; i < 25; ++i)
+            printf("\n"); // Simular limpiar la pantalla
+    } while (opcion != 3);
+}
+
+struct nodo *crearnodo(int n) {
+    struct nodo *nuevo_nodo = (struct nodo *)malloc(sizeof(struct nodo));
+    nuevo_nodo->dato = n;
+    nuevo_nodo->altura = 1;
+    nuevo_nodo->der = NULL;
+    nuevo_nodo->izq = NULL;
+    return nuevo_nodo;
+}
+
+int altura(struct nodo *n) {
+    return (n == NULL) ? 0 : n->altura;
+}
+
+int balanceFactor(struct nodo *n) {
+    return (n == NULL) ? 0 : altura(n->izq) - altura(n->der);
+}
+
+struct nodo *rotacionDerecha(struct nodo *y) {
+    struct nodo *x = y->izq;
+    struct nodo *T2 = x->der;
+
+    x->der = y;
+    y->izq = T2;
+
+    y->altura = (altura(y->izq) > altura(y->der) ? altura(y->izq) : altura(y->der)) + 1;
+    x->altura = (altura(x->izq) > altura(x->der) ? altura(x->izq) : altura(x->der)) + 1;
+
+    return x;
+}
+
+struct nodo *rotacionIzquierda(struct nodo *x) {
+    struct nodo *y = x->der;
+    struct nodo *T2 = y->izq;
+
+    y->izq = x;
+    x->der = T2;
+
+    x->altura = (altura(x->izq) > altura(x->der) ? altura(x->izq) : altura(x->der)) + 1;
+    y->altura = (altura(y->izq) > altura(y->der) ? altura(y->izq) : altura(y->der)) + 1;
+
+    return y;
+}
+
+struct nodo *balancearNodo(struct nodo *n) {
+    
+    n->altura = (altura(n->izq) > altura(n->der) ? altura(n->izq) : altura(n->der)) + 1;
+
+    int balance = balanceFactor(n);
+
+    if (balance > 1 && balanceFactor(n->izq) >= 0)
+        return rotacionDerecha(n);
+
+    if (balance < -1 && balanceFactor(n->der) <= 0)
+        return rotacionIzquierda(n);
+
+    if (balance > 1 && balanceFactor(n->izq) < 0) {
+        n->izq = rotacionIzquierda(n->izq);
+        return rotacionDerecha(n);
+    }
+
+    if (balance < -1 && balanceFactor(n->der) > 0) {
+        n->der = rotacionDerecha(n->der);
+        return rotacionIzquierda(n);
+    }
+
+    return n;
+}
+
+struct nodo *insertarAVL(struct nodo *raiz, int dato) {
+    if (raiz == NULL)
+        return crearnodo(dato);
+
+    if (dato < raiz->dato)
+        raiz->izq = insertarAVL(raiz->izq, dato);
+    else if (dato > raiz->dato)
+        raiz->der = insertarAVL(raiz->der, dato);
+    else 
+        return raiz;
+
+    raiz->altura = (altura(raiz->izq) > altura(raiz->der) ? altura(raiz->izq) : altura(raiz->der)) + 1;
+    return balancearNodo(raiz);
+}
+
+void mostrarArbolInOrden(struct nodo *raiz) {
+    if (raiz != NULL) {
+        mostrarArbolInOrden(raiz->izq);
+        printf("%d ", raiz->dato);
+        mostrarArbolInOrden(raiz->der);
+    }
+}
+
+void liberarArbol(struct nodo *raiz) {
+    if (raiz != NULL) {
+        liberarArbol(raiz->izq);
+        liberarArbol(raiz->der);
+        free(raiz);
+    }
+}
