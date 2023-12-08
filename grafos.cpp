@@ -91,7 +91,7 @@ void InsertarArista(int datoDestino)
     printf("Ingrese el peso de la arista: ");
     while (scanf("%d", &pes) != 1)
     {
-        printf("Error: Ingrese un número válido.\n");
+        printf("Error: Ingrese un numero valido.\n");
         while (getchar() != '\n'); // Limpiar el buffer de entrada
     }
 
@@ -156,7 +156,7 @@ int main()
         printf("\n Ingrese su opcion: ");
         while (scanf("%d", &opcion) != 1)
         {
-            printf("Error: Ingrese un número válido.\n");
+            printf("Error: Ingrese un numero valido.\n");
             while (getchar() != '\n'); // Limpiar el buffer de entrada
         }
 
@@ -166,7 +166,7 @@ int main()
             printf("INGRESE UN NUMERO PARA EL VERTICE: ");
             while (scanf("%d", &datoOrigen) != 1)
             {
-                printf("Error: Ingrese un número válido.\n");
+                printf("Error: Ingrese un numero valido.\n");
                 while (getchar() != '\n'); // Limpiar el buffer de entrada
             }
             InsertarVertice(datoOrigen);
@@ -177,7 +177,7 @@ int main()
             printf("INGRESE EL NODO DE ORIGEN: ");
             while (scanf("%d", &datoOrigen) != 1)
             {
-                printf("Error: Ingrese un número válido.\n");
+                printf("Error: Ingrese un numero valido.\n");
                 while (getchar() != '\n'); // Limpiar el buffer de entrada
             }
             printf("INGRESE EL NODO DEL DESTINO: ");
